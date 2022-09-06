@@ -19,6 +19,8 @@ services:
     build:
       context: .
       target: app-backend
+      args:
+        APP_ENV: local
     image: role-backend/app
     environment:
       - DB_CONNECTION=pgsql
