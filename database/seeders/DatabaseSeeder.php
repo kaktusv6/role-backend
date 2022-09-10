@@ -2,7 +2,9 @@
 
 namespace Database\Seeders;
 
+use Database\Seeders\Fixture\FixtureSeeder;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\App;
 
 class DatabaseSeeder extends Seeder
 {
@@ -13,6 +15,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-
+        if (App::environment('local'))
+            $this->call(FixtureSeeder::class);
     }
 }
