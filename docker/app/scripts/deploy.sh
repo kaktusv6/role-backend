@@ -28,6 +28,7 @@ if [ "$APP_ENV" = "local" ]; then
   chown -R $USER:$GROUP $SRC_DIR
 
   php artisan migrate
+  php artisan db:seed
 fi
 
 exec php-fpm
