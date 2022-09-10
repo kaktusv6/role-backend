@@ -24,18 +24,19 @@ services:
     image: role-backend/app
     environment:
       - DB_CONNECTION=pgsql
-      - DB_HOST=role_database
+      - DB_HOST=role-backend-database
       - DB_PORT=5432
     volumes:
-      - ./:/var/www
+      - /var/www/vendor
+      - .:/var/www
     depends_on:
-      -   database
+      - database
     networks:
       - default
 
   database:
     image: postgres:latest
-    container_name: role_database
+    container_name: role-backend-database
     ports:
       - 5432:5432
     environment:
