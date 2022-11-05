@@ -6,20 +6,25 @@ use App\Factories\Slug\DefaultSlugFactory;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
-final class GameCreator extends Creator
+final class CharacteristicCreator extends Creator
 {
-    public function create(array $datum): int
+    public function create(int $gameId, array $datum): void
     {
         $now = Carbon::now();
         /** @var DefaultSlugFactory $slugCreator */
         $slugCreator = app(DefaultSlugFactory::class);
-        return DB::table('games')->insertGetId([
+
+        DB::table('characteristics')->insert([
+            'game_id' => $gameId,
             'name' => $datum['name'],
             'slug' => $slugCreator->create([
-                $this->getNextIdTable('games'),
+                $this->getNextIdTable('characteristics'),
                 $datum['name'],
             ]),
             'description' => $datum['description'] ?? null,
+            'with_sign' => $datum['with_sign'] ?? false,
+            'minimum' => $datum['minimum'] ?? null,
+            'maximum' => $datum['maximum'] ?? null,
             'created_at' => $now,
             'updated_at' => $now,
         ]);

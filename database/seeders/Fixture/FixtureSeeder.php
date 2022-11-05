@@ -2,6 +2,7 @@
 
 namespace Database\Seeders\Fixture;
 
+use Database\Seeders\Fixture\Creators\CharacteristicCreator;
 use Database\Seeders\Fixture\Creators\GameCreator;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -53,7 +54,7 @@ final class FixtureSeeder extends Seeder
         $this->disableForeignKeys($tabletNames);
 
         foreach ($tabletNames as $name) {
-            DB::statement("TRUNCATE TABLE $name");
+            DB::statement("TRUNCATE TABLE $name RESTART IDENTITY");
         }
 
         $this->enableForeignKeys($tabletNames);
@@ -64,9 +65,15 @@ final class FixtureSeeder extends Seeder
         $gameData = JsonUtils::decodeFile(self::PATH_TO_FIXTURE);
 
         $gameCreator = new GameCreator();
+        $characteristicCreator = new CharacteristicCreator();
 
         foreach ($gameData as $gameDatum) {
-            $gameId = $gameCreator->createFromDatum($gameDatum);
+            $gameId = $gameCreator->create($gameDatum);
+
+            foreach ($gameDatum['characteristics'] as $characteristicDatum)
+            {
+                $characteristicCreator->create($gameId, $characteristicDatum);
+            }
         }
     }
 
