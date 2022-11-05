@@ -33,11 +33,12 @@ return [
             'connection'    => env('DB_CONNECTION', 'mysql'),
             'namespaces'    => [
                 'App\Modules\Games\Entities',
+                'App\Modules\Characteristics\Entities',
             ],
             'paths'         => [],
             'repository'    => Doctrine\ORM\EntityRepository::class,
             'proxies'       => [
-                'namespace'     => false,
+                'namespace'     => true,
                 'path'          => storage_path('proxies'),
                 'auto_generate' => env('DOCTRINE_PROXY_AUTOGENERATE', false)
             ],

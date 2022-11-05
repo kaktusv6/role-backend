@@ -2,18 +2,22 @@
 
 namespace App\Modules\Games\Entities;
 
+use App\Modules\Characteristics\Entities\Characteristic;
 use Carbon\Carbon;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\Table;
 use Doctrine\ORM\Mapping\UniqueConstraint;
 
 #[Entity]
 #[Table(name: "games")]
 #[UniqueConstraint(name: "games_slug_unique", columns: ["slug"])]
-final class Game
+class Game
 {
     #[Id, Column(type: "integer"), GeneratedValue()]
     private int $id;
@@ -36,14 +40,12 @@ final class Game
     #[Column(name: "deleted_at", type: "carbon", nullable: true)]
     private ?Carbon $deletedAt;
 
-    public function __construct(string $name, ?string $description)
-    {
-        $this->name = $name;
-        $this->slug = str_replace(' ', '-', trim(mb_strtolower($name)));
-        $this->description = $description;
+    #[OneToMany(mappedBy: 'game', targetEntity: Characteristic::class)]
+    private Collection $characteristics;
 
-        $this->createdAt = Carbon::now();
-        $this->updatedAt = $this->createdAt;
+    public function __construct()
+    {
+        $this->characteristics = new ArrayCollection();
     }
 
     /**
@@ -92,5 +94,13 @@ final class Game
     public function getUpdatedAt(): Carbon
     {
         return $this->updatedAt;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getCharacteristics(): Collection
+    {
+        return $this->characteristics;
     }
 }
