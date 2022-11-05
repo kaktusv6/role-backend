@@ -3,6 +3,9 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -46,5 +49,27 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
+
+    public function render($request, Throwable $e)
+    {
+        $status = Response::HTTP_INTERNAL_SERVER_ERROR;
+
+        $response = [
+            'code' => $e->getCode(),
+            'message' => $e->getMessage(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine(),
+            'trace' => $e->getTrace(),
+        ];
+
+        if ($e instanceof HttpExceptionInterface)
+        {
+            $status = $e->getStatusCode();
+        } else if ($e instanceof ValidationException) {
+            $status = Response::HTTP_BAD_REQUEST;
+        }
+
+        return response()->json($response, $status);
     }
 }
